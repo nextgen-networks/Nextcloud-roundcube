@@ -1,9 +1,9 @@
 # owncloud-roundcube
-OwnCloud app to integrate RoundCube Webmail. The app embeds the [RoundCube webmail](https://roundcube.net/ "RoundCube's homepage") interface in ownCloud.
+NextCloud app to integrate RoundCube Webmail. The app embeds the [RoundCube webmail](https://roundcube.net/ "RoundCube's homepage") interface in NextCloud.
 
 ## History
 This app uses idea and code from [this app](https://github.com/hypery2k/owncloud/tree/master/roundcube).
-The app needed an update to work with newer versions of ownCloud. This app doesn't have all features but at least you can auto-login.
+The app needed an update to work with newer versions of NextCloud. This app doesn't have all features but at least you can auto-login.
 
 ## Features
 - Auto login
@@ -13,30 +13,30 @@ The app needed an update to work with newer versions of ownCloud. This app doesn
 - Per email domain path to RC
 
 ## Requirements
-- ownCloud >= 10
-- Roundcube Webmail >= 1.1
+- NextCloud >= 20
+- Roundcube Webmail >= 1.4
 - curl
 
 ## Tested with
-- ownCloud 10.0.10
-- Roundcube Webmail 1.1.5
-- Roundcube in a different machine/subdomain than ownCloud
+- NextCloud 21.0.2
+- Roundcube Webmail 1.4.1
+- Roundcube in a different machine/subdomain than NextCloud
 
 ## Installation
 - Install app by cloning this repository.
-- The RC installation must be accessible from the same ownCloud server (same domain).
+- The RC installation must be accessible from the same NextCloud server (same domain).
 
 ## Configuration
 - You may need to configure a virtual host with a proxypass alias to somewhere else.
   - Apache would need mods proxy, proxy_http
-- OwnCloud settings (as admin), Additional:
+- NextCloud settings (as admin), Additional:
   - Set at least the default RC path: e.g. roundcube1/
   - Save settings
 
 ### Apache example:
 
 ```apache
-ServerName owncloud.domain.com
+ServerName nextcloud.domain.com
 
 SSLProxyEngine on
 ProxyPass /roundcube1/ https://proxymail1.domain.com/
