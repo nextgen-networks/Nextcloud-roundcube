@@ -3,15 +3,19 @@
 	<id>roundcube</id>
 	<namespace>RoundCube</namespace>
 	<name>RoundCube Mail</name>
-	<license>AGPL</license>
-	<author>Martin Reinhardt; Leonardo R. Morelli</author>
-	<version>1.0.0</version>
+	<licence>AGPL</licence>
+	<author>Martin Reinhardt; Leonardo R. Morelli; Ruslan Bor;</author>
+	<version>10.0.1</version>
 	<dependencies>
-		<owncloud min-version="10.0" max-version="11.0" />
+		<php min-version="7.3" max-version="8.0" />
+		<nextcloud min-version="20" max-version="22" />
 	</dependencies>
 	<description>
-		Integrates existing roundcube server into OwnCloud.
+		Integrates existing roundcube into OwnCloud.
 	</description>
-	<category>integration</category>
 	<website>https://github.com/LeonardoRM/owncloud-roundcube/</website>
+	<settings>
+    <admin>OCA\RoundCube\Settings\Admin</admin>
+    <admin-section>OCA\RoundCube\Settings\AdminSection</admin-section>
+  </settings>
 </info>

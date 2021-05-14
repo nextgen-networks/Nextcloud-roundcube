@@ -23,7 +23,7 @@ Roundcube.adminSettingsUI = function() {
         event.preventDefault();
 
         // Prevent CSRF with OC request token
-        $('#requesttoken').val(oc_requesttoken);
+        $('#requesttoken').val(OC.requestToken);
         var data = $('#rcAdminSettings').serialize();
         $('#rc_save_success, #rc_save_error').hide();
         $('#rc_save_status').show();

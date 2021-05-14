@@ -22,5 +22,5 @@
  */
 ?>
 <div id="errorMsg">
-    <p><?php p($l->t("Unable to login into roundcube. There are login errors. Relogin to ownCloud. Relogin to ownCloud.")); ?></p>
+    <p><?php p($l->t("Unable to login into roundcube. There are login errors.")); ?></p>
 </div>

@@ -43,7 +43,7 @@ class AuthHelper
      * @return true if login was successfull otherwise false
      */
     public static function postLogin($params) {
-        \OCP\App::checkAppEnabled('roundcube');
+      //  \OCP\App::checkAppEnabled('roundcube');
         if (strpos($params['uid'], '@') === false) {
             Util::writeLog('roundcube', __METHOD__ . ": username ({$params['uid']}) is not an email address.", Util::WARN);
             return false;
@@ -95,7 +95,7 @@ class AuthHelper
      * @return boolean True on success, false otherwise.
      */
     public static function logout() {
-        \OCP\App::checkAppEnabled('roundcube');
+     //   \OCP\App::checkAppEnabled('roundcube');
         $user = \OC::$server->getUserSession()->getUser()->getUID();
         if (strpos($user, '@') === false) {
             Util::writeLog('roundcube', __METHOD__ . ": username ($user) is not an email address.", Util::WARN);
