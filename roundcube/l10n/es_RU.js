@@ -1,13 +1,13 @@
 OC.L10N.register(
     "roundcube",
     {
-    "Webmail" : "Webmail",
-    "Not submitted for us." : "No enviado para nosotros.",
-    "Default RC installation path can't be an empty string." : "La ruta por defecto de la instalación del RC no puede ser vacía.",
-    "Default path must be a url relative to this server." : "La ruta por defecto debe ser una url relativa a este servidor.",
-    "A domain is not valid." : "Uno de los dominios no es válido.",
-    "A path is not valid." : "Una de las rutas no es válida.",
-    "Paths must be urls relative to this server." : "Las rutas deben ser urls relativas a este servidor.",
+    "Webmail" : "Почта",
+    "Not submitted for us." : "Не применимо.",
+    "Default RC installation path can't be an empty string." : "Строка установленного RC не может быть пустым.",
+    "Default path must be a url relative to this server." : "Строка должна содержать URL адрес проксируемый на текущий сервер.",
+    "A domain is not valid." : "Доменное имя не верно.",
+    "A path is not valid." : "Путь не верен.",
+    "Paths must be urls relative to this server." : "Путь должен содержать URL адрес.",
     "Unpaired domains and paths." : "El número de dominios y rutas no es parejo.",
     "Some inputs are not valid." : "Algunas entradas no son válidas.",
     "Application settings successfully stored." : "Configuración de la aplicación guardada con éxito.",
@@ -23,7 +23,7 @@ OC.L10N.register(
     "Show RoundCube top information bar (shows logout button)." : "Mostrar barra de información de RoundCube arriba (muestra botón de logout).",
     "Disable when debugging with self-signed certificates." : "Deshabilitar para depurar con certificados auto-firmados.",
     "Enable SSL verification." : "Habilitar verificación SSL.",
-    "Save" : "Guardar",
-    "Saving..." : "Guardando..."
+    "Save" : "Сохранить",
+    "Saving..." : "Сохранение..."
 },
 "");

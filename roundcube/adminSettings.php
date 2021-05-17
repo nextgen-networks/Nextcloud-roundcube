@@ -1,11 +1,10 @@
 <?php
 /**
- * NextCloud - roundcube mail plugin
+ * ownCloud - roundcube mail plugin
  *
  * @author Martin Reinhardt and David Jaedke
  * @author 2019 Leonardo R. Morelli github.com/LeonardoRM
  * @copyright 2012 Martin Reinhardt contact@martinreinhardt-online.de
- * @author 2020 github.com/flionet89
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE

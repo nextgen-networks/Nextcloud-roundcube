@@ -96,8 +96,8 @@ msgstr "Habilitar verificación SSL."
 
 #: templates/tpl.adminSettings.php:100
 msgid "Save"
-msgstr "Guardar"
+msgstr "Сохранить"
 
 #: templates/tpl.adminSettings.php:101
 msgid "Saving..."
-msgstr "Guardando..."
+msgstr "Сохранение..."

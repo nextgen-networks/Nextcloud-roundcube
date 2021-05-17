@@ -1,7 +1,5 @@
-OC.L10N.register(
-    "roundcube",
-    {
-    "Webmail" : "Webmail",
+{ "translations": {
+    "Webmail" : "Почта",
     "Not submitted for us." : "No enviado para nosotros.",
     "Default RC installation path can't be an empty string." : "La ruta por defecto de la instalación del RC no puede ser vacía.",
     "Default path must be a url relative to this server." : "La ruta por defecto debe ser una url relativa a este servidor.",
@@ -23,7 +21,7 @@ OC.L10N.register(
     "Show RoundCube top information bar (shows logout button)." : "Mostrar barra de información de RoundCube arriba (muestra botón de logout).",
     "Disable when debugging with self-signed certificates." : "Deshabilitar para depurar con certificados auto-firmados.",
     "Enable SSL verification." : "Habilitar verificación SSL.",
-    "Save" : "Guardar",
-    "Saving..." : "Guardando..."
-},
-"");
+    "Save" : "Сохранить",
+    "Saving..." : "Сохранение..."
+},"pluralForm" :""
+}
