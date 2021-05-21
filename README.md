@@ -14,7 +14,7 @@ The app needed an update to work with newer versions of NextCloud. This app does
 
 ## Requirements
 - NextCloud >= 21
-- Roundcube Webmail >= 1.4
+- Roundcube Webmail >= 1.4.1
 - curl
 
 ## Tested with
