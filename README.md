@@ -13,7 +13,7 @@ The app needed an update to work with newer versions of NextCloud. This app does
 - Per email domain path to RC
 
 ## Requirements
-- NextCloud >= 20
+- NextCloud >= 21
 - Roundcube Webmail >= 1.4
 - curl
 
