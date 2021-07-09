@@ -36,6 +36,6 @@
         'order' => 0,
         'href'  => $urlGen->linkToRoute('roundcube.page.index'),
         'icon'  => $urlGen->imagePath('roundcube', 'mail.svg'),
-        'name'  => \OC::$server->getL10N('roundcube')->t('Почта')
+        'name'  => \OC::$server->getL10N('roundcube')->t('Email')
     );
 });
