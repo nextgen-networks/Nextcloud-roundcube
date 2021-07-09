@@ -39,8 +39,8 @@ msgid "Application settings successfully stored."
 msgstr "Configuração do aplicativo foi salva com sucesso."
 
 #: templates/part.error.login.php:25
-msgid "Unable to login into roundcube. There are login errors. Relogin to Nextcloud."
-msgstr "Não foi possível fazer o login no roundcube. Há erros de login. Saia e volte a faça o login novamente no Nextcloud"
+msgid "There are login errors, please relogin to Nextcloud"
+msgstr "Há erros de login, por favor saia e faça o login novamente no nextcloud"
 
 #: templates/part.error.noemail.php:23
 #, php-format

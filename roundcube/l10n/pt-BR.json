@@ -9,7 +9,7 @@
     "Unpaired domains and paths." : "El número de domínios y rutas no es parejo.",
     "Some inputs are not valid." : "Algumas entradas são inválidas.",
     "Application settings successfully stored." : "Configuração do aplicativo foi salva com sucesso.",
-    "Unable to login into roundcube. There are login errors. Relogin to Nextcloud." : "Não foi possível fazer o login no roundcube. Há erros de login. Saia e volte a faça o login novamente no Nextcloud",
+    "There are login errors, please relogin to Nextcloud" : "Há erros de login, por favor saia e faça o login novamente no nextcloud",
     "Username '%s' is not a valid email address, neither the user email." : "O usuário '%s' não é um endereço de email válido, e nem é email de usuário.",
     "Default RC installation path" : "Caminho padrão da instalação do RC",
     "Default path relative to Nextcloud server (%s)." : "Caminho padrão relativo ao servidor Nextcloud(%s).",
