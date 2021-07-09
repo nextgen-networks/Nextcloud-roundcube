@@ -40,8 +40,8 @@ msgstr ""
 
 #: templates/part.error.login.php:25
 msgid ""
-"Unable to login into roundcube. There are login errors. Relogin to ownCloud. "
-"Relogin to ownCloud."
+"Unable to login into roundcube. There are login errors. Relogin to Nextcloud. "
+"Relogin to Nextcloud."
 msgstr ""
 
 #: templates/part.error.noemail.php:23
@@ -55,7 +55,7 @@ msgstr ""
 
 #: templates/tpl.adminSettings.php:40
 #, php-format
-msgid "Default path relative to ownCloud server (%s)."
+msgid "Default path relative to Nextcloud server (%s)."
 msgstr ""
 
 #: templates/tpl.adminSettings.php:43
@@ -66,7 +66,7 @@ msgstr ""
 msgid ""
 "Enter your users' email domains and their corresponding paths if you have "
 "different RoundCube installations. For example: 'domain1.com':'roundcube1/', "
-"'domain2.com':'roundcube2/'. Path relative to ownCloud server."
+"'domain2.com':'roundcube2/'. Path relative to Nextcloud server."
 msgstr ""
 
 #: templates/tpl.adminSettings.php:51 templates/tpl.adminSettings.php:67
