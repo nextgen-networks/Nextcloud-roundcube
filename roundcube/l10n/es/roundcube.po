@@ -39,8 +39,8 @@ msgid "Application settings successfully stored."
 msgstr "Configuración de la aplicación guardada con éxito."
 
 #: templates/part.error.login.php:25
-msgid "Unable to login into roundcube. There are login errors. Relogin to ownCloud."
-msgstr "No se puede hacer login en RoundCube. Hay errores de login. Salir y volver a iniciar sesión en la Nube."
+msgid "There are login errors, please relogin to Nextcloud"
+msgstr "Hay errores de login, Salir y volver a iniciar sesión en la Nube."
 
 #: templates/part.error.noemail.php:23
 #, php-format
@@ -53,8 +53,8 @@ msgstr "Ruta por defecto al RC"
 
 #: templates/tpl.adminSettings.php:40
 #, php-format
-msgid "Default path relative to ownCloud server (%s)."
-msgstr "Ruta por defecto relativa al servidor ownCloud (%s)."
+msgid "Default path relative to Nextcloud server (%s)."
+msgstr "Ruta por defecto relativa al servidor Nextcloud (%s)."
 
 #: templates/tpl.adminSettings.php:43
 msgid "Per email domain RC installations"
@@ -64,11 +64,11 @@ msgstr "Rutas a RC por dominio de email"
 msgid ""
 "Enter your users' email domains and their corresponding paths if you have "
 "different RoundCube installations. For example: 'domain1.com':'roundcube1/', "
-"'domain2.com':'roundcube2/'. Path relative to ownCloud server."
+"'domain2.com':'roundcube2/'. Path relative to Nextcloud server."
 msgstr "Ingresar los dominios de los emails de sus usuarios y las "
 "correspondientes rutas si tiene diferentes instalaciones de RoundCube. Por "
 "ejemplo: 'domain1.com':'roundcube1/', 'domain2.com':'roundcube2/'. "
-"Rutas relativas al servidor ownCloud."
+"Rutas relativas al servidor Nextcloud."
 
 #: templates/tpl.adminSettings.php:51 templates/tpl.adminSettings.php:67
 msgid "Remove"
