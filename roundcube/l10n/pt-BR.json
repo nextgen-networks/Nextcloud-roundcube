@@ -1,0 +1,27 @@
+{ "translations": {
+    "Webmail" : "Webmail",
+    "Not submitted for us." : "Não enviado para nós.",
+    "Default RC installation path can't be an empty string." : "Caminho padrão do RC, não pode ser vazio.",
+    "Default path must be a url relative to this server." : "O caminho padrão deve ser um url relativo a esse servidor.",
+    "A domain is not valid." : "Um dos domínios não é valido.",
+    "A path is not valid." : "Um os caminhos não é válido.",
+    "Paths must be urls relative to this server." : "Os caminhos devem ser urls relativos ao servidor.",
+    "Unpaired domains and paths." : "El número de domínios y rutas no es parejo.",
+    "Some inputs are not valid." : "Algumas entradas são inválidas.",
+    "Application settings successfully stored." : "Configuração do aplicativo foi salva com sucesso.",
+    "There are login errors, please relogin to Nextcloud" : "Há erros de login, por favor saia e faça o login novamente no nextcloud",
+    "Username '%s' is not a valid email address, neither the user email." : "O usuário '%s' não é um endereço de email válido, e nem é email de usuário.",
+    "Default RC installation path" : "Caminho padrão da instalação do RC",
+    "Default path relative to Nextcloud server (%s)." : "Caminho padrão relativo ao servidor Nextcloud(%s).",
+    "Per email domain RC installations" : "Caminho RC por domínio de email",
+    "Enter your users' email domains and their corresponding paths if you have different RoundCube installations. For example: 'domain1.com':'roundcube1/', 'domain2.com':'roundcube2/'. Path relative to Nextcloud server." : "Entre com os domínios dos emails de seus usuários e os correspondentes caminhos se você tem diferentes instalações do RoundCube. Por exemplo: 'domain1.com':'roundcube1/', 'domain2.com':'roundcube2/'. Caminhos relativos ao servidor Nextcloud.",
+    "Remove" : "Remover",
+    "Add" : "Adicionar",
+    "Advanced settings" : "Configurações avançadas",
+    "Show RoundCube top information bar (shows logout button)." : "Mostrar barra de informacão do RoundCube acima (Mostra botão de logout).",
+    "Disable when debugging with self-signed certificates." : "Desabilitar para depurar com certificados auto-assinados.",
+    "Enable SSL verification." : "Habilitar verificação SSL.",
+    "Save" : "Salvar",
+    "Saving..." : "Salvando ..."
+},"pluralForm" :""
+}
