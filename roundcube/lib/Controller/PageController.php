@@ -38,7 +38,6 @@ class PageController extends \OCP\AppFramework\Controller
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$l = \OC::$server->getL10N($this->appName);
 		\OC::$server->getNavigationManager()->setActiveEntry($this->appName);
 		$user = \OC::$server->getUserSession()->getUser()->getUID();
 		$email = \OC::$server->getUserSession()->getUser()->getEMailAddress();
