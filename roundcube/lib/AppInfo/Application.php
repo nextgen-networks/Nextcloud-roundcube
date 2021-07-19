@@ -25,6 +25,7 @@
 
 namespace OCA\RoundCube\AppInfo;
 
+use OCP\Authentication\LoginCredentials\IStore;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
@@ -45,7 +46,7 @@ class Application extends App implements IBootstrap
 
     public function register(IRegistrationContext $context): void {
         $context->registerService(PageController::class, function (ContainerInterface $c) {
-            return new PageController(self::APP_ID, $c->get(IRequest::class));
+            return new PageController(self::APP_ID, $c->get(IRequest::class), $c->get(IStore::class));
         }, false);
 
         $context->registerService(SettingsController::class, function(ContainerInterface $c) {
@@ -54,19 +55,6 @@ class Application extends App implements IBootstrap
     }
 
     public function boot(IBootContext $context): void {
-        $this->registerHooksAndEvents();
-        $this->addNavigationManager();
-        \OCP\App::registerAdmin('roundcube', 'adminSettings');
-    }
-
-    /* Register the hooks and events */
-    private function registerHooksAndEvents() {
-        Util::connectHook('OC_User', 'post_login', 'OCA\RoundCube\AuthHelper', 'postLogin');
-        Util::connectHook('OC_User', 'logout', 'OCA\RoundCube\AuthHelper', 'logout');
-        Util::connectHook('OC_User', 'post_setPassword', 'OCA\RoundCube\AuthHelper', 'changePasswordListener');
-    }
-
-    private function addNavigationManager() {
         \OC::$server->getNavigationManager()->add(function () {
             $urlGen = \OC::$server->getURLGenerator();
             return array(
@@ -77,6 +65,10 @@ class Application extends App implements IBootstrap
                 'name'  => \OC::$server->getL10N('roundcube')->t('Email')
             );
         });
+
+        Util::connectHook('OC_User', 'logout', 'OCA\RoundCube\AuthHelper', 'logout');
+
+        \OCP\App::registerAdmin('roundcube', 'adminSettings');
     }
 }
 

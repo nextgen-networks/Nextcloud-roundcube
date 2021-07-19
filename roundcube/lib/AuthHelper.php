@@ -22,69 +22,47 @@
  */
 namespace OCA\RoundCube;
 
+use OCP\Authentication\Exceptions\CredentialsUnavailableException;
+use OCP\Authentication\Exceptions\PasswordUnavailableException;
+use OCP\Authentication\LoginCredentials\IStore;
+use OCA\RoundCube\InternalAddress;
 use OCA\RoundCube\BackLogin;
-use OCA\RoundCube\Crypto;
 use OCP\Util;
 
 class AuthHelper
 {
-    const COOKIE_RC_TOKEN     = "oc-rc-token";
-    const COOKIE_RC_STRING    = "oc-rc-string";
     const COOKIE_RC_SESSID    = "roundcube_sessid";
     const COOKIE_RC_SESSAUTH  = "roundcube_sessauth";
-    const SESSION_RC_PRIVKEY  = 'oc-rc-privateKey';
-    const SESSION_RC_ADDRESS  = 'oc-rc-internal-address';
-    const SESSION_RC_SERVER   = 'oc-rc-server';
 
-    /**
-     * Save Login data for later login into roundcube server
-     *
-     * @param array $params Keys are: [run,uid,password]
-     * @return true if login was successfull otherwise false
-     */
-    public static function postLogin($params) {
-        if (strpos($params['uid'], '@') === false) {
-            Util::writeLog('roundcube', __METHOD__ . ": username ({$params['uid']}) is not an email address. Hence, the user needs to have an email address configured.", Util::DEBUG);
-        }
-        $via = \OC::$server->getRequest()->getRequestUri();
-        if (preg_match(
-            '#(/ocs/v\d.php|'.
-            '/apps/calendar/caldav.php|'.
-            '/apps/contacts/carddav.php|'.
-            '/remote.php/webdav)/#', $via)
-        ) {
-            return false;
-        }
-        Util::writeLog('roundcube', __METHOD__ . ": Preparing login of roundcube user '{$params['uid']}'", Util::DEBUG);
-        $passphrase = Crypto::generateToken();
-        $pair = Crypto::generateKeyPair($passphrase);
-        $plainText = $params['password'];
-        $b64crypted = Crypto::publicEncrypt($plainText, $pair['publicKey']);
-        \OC::$server->getSession()->set(self::SESSION_RC_PRIVKEY, $pair['privateKey']);
-        setcookie(self::COOKIE_RC_TOKEN, $passphrase, 0, "/", "", true, true);
-        setcookie(self::COOKIE_RC_STRING, $b64crypted, 0, "/", "", true, true);
+    /** @var email */
+    private $email;
 
-        $app = new \OCP\AppFramework\App('roundcube');
-        $rcIA = $app->getContainer()->query('OCA\RoundCube\InternalAddress');
-        $rcAddress = $rcIA->getAddress();
-        $rcServer  = $rcIA->getServer();
-        \OC::$server->getSession()->set(AuthHelper::SESSION_RC_ADDRESS, $rcAddress);
-        \OC::$server->getSession()->set(AuthHelper::SESSION_RC_SERVER, $rcServer);
+    /** @var rcIA */
+    private $rcIA;
 
-        return true;
+    /** @var credentialStore */
+    private $credentialStore;
+
+    public function __construct(InternalAddress $rcIA, IStore $credentialStore, $email) {
+        $this->email = $email;
+        $this->rcIA = $rcIA;
+        $this->credentialStore = $credentialStore;
     }
 
     /**
      * Logs in to RC webmail.
      * @return bool True on login, false otherwise.
      */
-    public static function login() {
-        $passphrase = \OC::$server->getRequest()->getCookie(self::COOKIE_RC_TOKEN);
-        $b64crypted = \OC::$server->getRequest()->getCookie(self::COOKIE_RC_STRING);
-        $encPrivKey = \OC::$server->getSession()->get(self::SESSION_RC_PRIVKEY);
-        $password = Crypto::privateDecrypt($b64crypted, $encPrivKey, $passphrase);
-        $email = self::getUserEmail();
-        $backLogin = new BackLogin($email, $password);
+    public function login() {
+        try {
+            $password = $this->credentialStore->getLoginCredentials()->getPassword();
+        } catch (CredentialsUnavailableException | PasswordUnavailableException $e) {
+            Util::writeLog('roundcube', __METHOD__ . ": Error while retrieving the password of the $this->email account.", Util::ERROR);
+            return false;
+        }
+
+        $rcIA = $this->rcIA;
+        $backLogin = new BackLogin($this->email, $password, $rcIA->getAddress(), $rcIA->getServer());
         return $backLogin->login();
     }
 
@@ -98,24 +76,11 @@ class AuthHelper
             Util::writeLog('roundcube', __METHOD__ . ": user email ($email) is not an email address.", Util::WARN);
             return false;
         }
-        \OC::$server->getSession()->remove(self::SESSION_RC_PRIVKEY);
         // Expires cookies.
-        setcookie(self::COOKIE_RC_TOKEN,    "-del-", 1, "/", "", true, true);
-        setcookie(self::COOKIE_RC_STRING,   "-del-", 1, "/", "", true, true);
         setcookie(self::COOKIE_RC_SESSID,   "-del-", 1, "/", "", true, true);
         setcookie(self::COOKIE_RC_SESSAUTH, "-del-", 1, "/", "", true, true);
         Util::writeLog('roundcube', __METHOD__ . ": Logout of user '$email' from RoundCube done.", Util::INFO);
         return true;
-    }
-
-    /**
-     * Listener which gets invoked if password is changed within ownCloud.
-     * @param array $params ['uid', 'password']
-     */
-    public static function changePasswordListener($params) {
-        if (isset($params['uid']) && isset($params['password'])) {
-            self::login();
-        }
     }
 
     /**
@@ -134,6 +99,7 @@ class AuthHelper
             return $email;
         }
 
-        return $uid; // returns a non-empty default
+        return $email; // returns a non-empty default
     }
+
 }
