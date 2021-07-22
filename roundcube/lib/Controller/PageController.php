@@ -20,7 +20,7 @@
  */
 namespace OCA\RoundCube\Controller;
 
-use OCA\RoundCube\AuthHelper;
+use OCA\RoundCube\Auth\AuthHelper;
 use OCA\RoundCube\InternalAddress;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\JSONResponse;

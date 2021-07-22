@@ -20,7 +20,7 @@
  */
 namespace OCA\RoundCube;
 
-use OCA\RoundCube\AuthHelper;
+use OCA\RoundCube\Auth\AuthHelper;
 use \OCP\Util;
 
 /**

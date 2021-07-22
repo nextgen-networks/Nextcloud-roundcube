@@ -2,7 +2,9 @@
 /**
  * ownCloud - RoundCube mail plugin
  *
+ * @license AGPL-3.0
  * @author Martin Reinhardt
+ * @author 2021 Igor Torrente
  * @author 2019 Leonardo R. Morelli github.com/LeonardoRM
  * @copyright 2013 Martin Reinhardt contact@martinreinhardt-online.de
  *
@@ -20,7 +22,7 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\RoundCube;
+namespace OCA\RoundCube\Auth;
 
 use OCP\Authentication\Exceptions\CredentialsUnavailableException;
 use OCP\Authentication\Exceptions\PasswordUnavailableException;
@@ -64,23 +66,6 @@ class AuthHelper
         $rcIA = $this->rcIA;
         $backLogin = new BackLogin($this->email, $password, $rcIA->getAddress(), $rcIA->getServer());
         return $backLogin->login();
-    }
-
-    /**
-     * Logout from RoundCube server by cleaning up session on OwnCloud logout
-     * @return boolean True on success, false otherwise.
-     */
-    public static function logout() {
-        $email = \OC::$server->getUserSession()->getUser()->getEMailAddress();
-        if (strpos($email, '@') === false) {
-            Util::writeLog('roundcube', __METHOD__ . ": user email ($email) is not an email address.", Util::WARN);
-            return false;
-        }
-        // Expires cookies.
-        setcookie(self::COOKIE_RC_SESSID,   "-del-", 1, "/", "", true, true);
-        setcookie(self::COOKIE_RC_SESSAUTH, "-del-", 1, "/", "", true, true);
-        Util::writeLog('roundcube', __METHOD__ . ": Logout of user '$email' from RoundCube done.", Util::INFO);
-        return true;
     }
 
     /**
