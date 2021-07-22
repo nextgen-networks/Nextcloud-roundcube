@@ -30,9 +30,13 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCA\RoundCube\Controller\SettingsController;
+use OCP\User\Events\BeforeUserLoggedOutEvent;
 use OCA\RoundCube\Controller\PageController;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCA\RoundCube\Auth\LogoutListener;
 use Psr\Container\ContainerInterface;
 use OCP\AppFramework\App;
+use OCP\IServerContainer;
 use OCP\IRequest;
 use OCP\Util;
 
@@ -52,6 +56,8 @@ class Application extends App implements IBootstrap
         $context->registerService(SettingsController::class, function(ContainerInterface $c) {
             return new SettingsController(self::APP_ID, $c->get(IRequest::class));
         }, false);
+
+        $context->registerEventListener(BeforeUserLoggedOutEvent::class, LogoutListener::class);
     }
 
     public function boot(IBootContext $context): void {
@@ -65,8 +71,6 @@ class Application extends App implements IBootstrap
                 'name'  => \OC::$server->getL10N('roundcube')->t('Email')
             );
         });
-
-        Util::connectHook('OC_User', 'logout', 'OCA\RoundCube\AuthHelper', 'logout');
 
         \OCP\App::registerAdmin('roundcube', 'adminSettings');
     }
