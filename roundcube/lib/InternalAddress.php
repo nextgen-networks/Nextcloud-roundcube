@@ -20,8 +20,10 @@
  */
 namespace OCA\RoundCube;
 
-use OCA\RoundCube\Auth\AuthHelper;
-use \OCP\Util;
+use OCP\IURLGenerator;
+use OCP\IRequest;
+use OCP\IConfig;
+use OCP\Util;
 
 /**
  * The responsibility is to figure out the RC full address of logged in user,
@@ -37,8 +39,14 @@ class InternalAddress
     private $protocol = null;
     private $server   = null;
     private $type     = null;
+    private $urlGenerator;
+    private $config;
+    private $request;
 
-    public function __construct($email) {
+    public function __construct(string $email, IConfig $config, IURLGenerator $urlGenerator, IRequest $request) {
+        $this->urlGenerator = $urlGenerator;
+        $this->request = $request;
+        $this->config = $config;
         $usrDom = explode('@', $email, 2);
         if (count($usrDom) === 2 && strlen($usrDom[1]) > 3) {
             $this->domain = $usrDom[1];
@@ -65,9 +73,8 @@ class InternalAddress
      * - https?://server/rcpath
      */
     private function getRCPath($domain) {
-        $config = \OC::$server->getConfig();
-        $defaultRCPath = $config->getAppValue('roundcube', 'defaultRCPath', self::DEFAULT_RC_PATH);
-        $jsonDomainPath = $config->getAppValue('roundcube', 'domainPath', '');
+        $defaultRCPath = $this->config->getAppValue('roundcube', 'defaultRCPath', self::DEFAULT_RC_PATH);
+        $jsonDomainPath = $this->config->getAppValue('roundcube', 'domainPath', '');
         if ($jsonDomainPath === '') {
             return $defaultRCPath;
         }
@@ -88,7 +95,7 @@ class InternalAddress
      * @return bool Successed?
      */
     private function computeProperties($path) {
-        $protocol = \OC::$server->getRequest()->getServerProtocol();
+        $protocol = $this->request->getServerProtocol();
         if (preg_match('/^(https?):\/\/([^\/]*)/', $path, $matches) === 1) {
             if ($matches[2] !== "") {
                 $this->type     = 'absolute';
@@ -101,11 +108,8 @@ class InternalAddress
         } else {
             $this->type     = 'relative';
             $this->protocol = $protocol;
-            $this->server   = preg_replace(
-                                "(^https?://|/.*)", "",
-                                \OC::$server->getURLGenerator()->
-                                    getAbsoluteURL("/")
-            );
+            $this->server   = preg_replace("(^https?://|/.*)", "",
+                              $this->urlGenerator->getAbsoluteURL("/"));
             $this->address  = "$protocol://{$this->server}/".ltrim($path, ' /');
             return true;
         }
