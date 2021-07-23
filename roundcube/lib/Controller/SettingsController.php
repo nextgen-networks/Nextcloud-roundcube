@@ -44,17 +44,6 @@ class SettingsController extends Controller
 		$this->l = $l;
 	}
 
-	public function adminSettings(): TemplateResponse {
-		$tplParams = array(
-			'ocServer'          => $this->urlGenerator->getAbsoluteURL("/"),
-			'defaultRCPath'     => $this->config->getAppValue($this->appName, 'defaultRCPath', ''),
-			'domainPath'        => json_decode($config->getAppValue($this->appName, 'domainPath', ''), true),
-			'showTopLine'       => $this->config->getAppValue($this->appName, 'showTopLine', false),
-			'enableSSLVerify'   => $this->config->getAppValue($this->appName, 'enableSSLVerify', true)
-		);
-		return new TemplateResponse($this->appName, 'tpl.adminSettings', $tplParams, 'blank');
-	}
-
 	/**
 	 * Validates and stores RC admin settings.
 	 * @return JSONResponse array(
