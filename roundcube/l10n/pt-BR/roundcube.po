@@ -1,0 +1,103 @@
+#: appinfo/app.php:39
+msgid "Webmail"
+msgstr "Webmail"
+
+#: lib/Controller/SettingsController.php:60
+msgid "Not submitted for us."
+msgstr "Não enviado para nós."
+
+#: lib/Controller/SettingsController.php:74
+msgid "Default RC installation path can't be an empty string."
+msgstr "Caminho padrão do RC, não pode ser vazio."
+
+#: lib/Controller/SettingsController.php:76
+msgid "Default path must be a url relative to this server."
+msgstr "O caminho padrão deve ser um url relativo a esse servidor."
+
+#: lib/Controller/SettingsController.php:82
+msgid "A domain is not valid."
+msgstr "Um dos domínios não é valido."
+
+#: lib/Controller/SettingsController.php:90
+msgid "A path is not valid."
+msgstr "Um os caminhos não é válido."
+
+#: lib/Controller/SettingsController.php:95
+msgid "Paths must be urls relative to this server."
+msgstr "Os caminhos devem ser urls relativos ao servidor."
+
+#: lib/Controller/SettingsController.php:102
+msgid "Unpaired domains and paths."
+msgstr "El número de dominios y rutas no es parejo."
+
+#: lib/Controller/SettingsController.php:108
+msgid "Some inputs are not valid."
+msgstr "Algumas entradas são inválidas."
+
+#: lib/Controller/SettingsController.php:131
+msgid "Application settings successfully stored."
+msgstr "Configuração do aplicativo foi salva com sucesso."
+
+#: templates/part.error.login.php:25
+msgid "There are login errors, please relogin to Nextcloud"
+msgstr "Há erros de login, por favor saia e faça o login novamente no nextcloud"
+
+#: templates/part.error.noemail.php:23
+#, php-format
+msgid "Username '%s' is not a valid email address, neither the user email."
+msgstr "O usuário '%s' não é um endereço de email válido, e nem é email de usuário."
+
+#: templates/tpl.adminSettings.php:35
+msgid "Default RC installation path"
+msgstr "Caminho padrão da instalação do RC"
+
+#: templates/tpl.adminSettings.php:40
+#, php-format
+msgid "Default path relative to Nextcloud server (%s)."
+msgstr "Caminho padrão relativo ao servidor Nextcloud(%s)."
+
+#: templates/tpl.adminSettings.php:43
+msgid "Per email domain RC installations"
+msgstr "Caminho RC por domínio de email"
+
+#: templates/tpl.adminSettings.php:44
+msgid ""
+"Enter your users' email domains and their corresponding paths if you have "
+"different RoundCube installations. For example: 'domain1.com':'roundcube1/', "
+"'domain2.com':'roundcube2/'. Path relative to Nextcloud server."
+msgstr "Entre com os domínios dos emails de seus usuários e os correspondentes "
+"caminhos se você tem diferentes instalações do RoundCube. Por exemplo: "
+"'domain1.com':'roundcube1/', 'domain2.com':'roundcube2/'. Caminhos "
+"relativos ao servidor Nextcloud."
+
+#: templates/tpl.adminSettings.php:51 templates/tpl.adminSettings.php:67
+msgid "Remove"
+msgstr "Remover"
+
+#: templates/tpl.adminSettings.php:78
+msgid "Add"
+msgstr "Adicionar"
+
+#: templates/tpl.adminSettings.php:85
+msgid "Advanced settings"
+msgstr "Configurações avançadas"
+
+#: templates/tpl.adminSettings.php:89
+msgid "Show RoundCube top information bar (shows logout button)."
+msgstr "Mostrar barra de informacão do RoundCube acima (Mostra botão de logout)."
+
+#: templates/tpl.adminSettings.php:93
+msgid "Disable when debugging with self-signed certificates."
+msgstr "Desabilitar para depurar com certificados auto-assinados."
+
+#: templates/tpl.adminSettings.php:96
+msgid "Enable SSL verification."
+msgstr "Habilitar verificação SSL."
+
+#: templates/tpl.adminSettings.php:100
+msgid "Save"
+msgstr "Salvar"
+
+#: templates/tpl.adminSettings.php:101
+msgid "Saving..."
+msgstr "Salvando ..."
