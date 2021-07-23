@@ -29,43 +29,71 @@ use OCP\Authentication\Exceptions\PasswordUnavailableException;
 use OCP\Authentication\LoginCredentials\IStore;
 use OCA\RoundCube\InternalAddress;
 use OCA\RoundCube\BackLogin;
+use OCP\IURLGenerator;
+use OCP\IUserSession;
+use OCP\IRequest;
+use OCP\IConfig;
 use OCP\Util;
 
 class AuthHelper
 {
     const COOKIE_RC_SESSID    = "roundcube_sessid";
     const COOKIE_RC_SESSAUTH  = "roundcube_sessauth";
+    const SUCCESS             =  0;
+    const ERROR_CREDENTIALS   = -1;
+    const ERROR_LOGING        = -2;
 
-    /** @var email */
-    private $email;
-
-    /** @var rcIA */
-    private $rcIA;
+    /** @var userSession */
+    private $userSession;
 
     /** @var credentialStore */
     private $credentialStore;
 
-    public function __construct(InternalAddress $rcIA, IStore $credentialStore, $email) {
-        $this->email = $email;
-        $this->rcIA = $rcIA;
+    /** @var config */
+    private $config;
+
+    /** @var urlGenerator */
+    private $urlGenerator;
+
+    /** @var request */
+    private $request;
+
+    public function __construct(IStore $credentialStore, IUserSession $userSession, IConfig $config,
+                                IURLGenerator $urlGenerator, IRequest $request)
+    {
         $this->credentialStore = $credentialStore;
+        $this->urlGenerator = $urlGenerator;
+        $this->userSession = $userSession;
+        $this->request = $request;
+        $this->config = $config;
     }
 
     /**
      * Logs in to RC webmail.
      * @return bool True on login, false otherwise.
      */
-    public function login() {
+    public function login(int &$return) {
+        $email = self::getUserEmail();
+        if (strpos($email, '@') === false) {
+            $user = $this->userSession->getUser()->getUID();
+            Util::writeLog('roundcube', __METHOD__ . ": username ($user) is not an email address and email ($email) is not valid also.", Util::WARN);
+            $return = self::ERROR_CREDENTIALS;
+            return null;
+        }
+
         try {
             $password = $this->credentialStore->getLoginCredentials()->getPassword();
         } catch (CredentialsUnavailableException | PasswordUnavailableException $e) {
-            Util::writeLog('roundcube', __METHOD__ . ": Error while retrieving the password of the $this->email account.", Util::ERROR);
-            return false;
+            Util::writeLog('roundcube', __METHOD__ . ": Error while retrieving the password of the $email account.", Util::ERROR);
+            $return = self::ERROR_CREDENTIALS;
+            return null;
         }
 
-        $rcIA = $this->rcIA;
-        $backLogin = new BackLogin($this->email, $password, $rcIA->getAddress(), $rcIA->getServer());
-        return $backLogin->login();
+        $rcIA = new InternalAddress($email, $this->config, $this->urlGenerator, $this->request);
+        $backLogin = new BackLogin($email, $password, $this->config, $rcIA);
+        $return = $backLogin->login();
+
+        return $rcIA;
     }
 
     /**
@@ -73,18 +101,17 @@ class AuthHelper
      * If the uid is an email, it'll return it regardless of the user email.
      * If neither the uid or the user email are an email, it'll return the uid.
      */
-    public static function getUserEmail() {
-        $uid = \OC::$server->getUserSession()->getUser()->getUID();
+    protected function getUserEmail() {
+        $uid = $this->userSession->getUser()->getUID();
         if (strpos($uid, '@') !== false) {
             return $uid;
         }
 
-        $email = \OC::$server->getUserSession()->getUser()->getEMailAddress();
+        $email = $this->userSession->getUser()->getEMailAddress();
         if (strpos($email, '@') !== false) {
             return $email;
         }
 
         return $email; // returns a non-empty default
     }
-
 }
