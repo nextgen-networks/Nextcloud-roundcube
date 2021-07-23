@@ -48,6 +48,7 @@ class InternalAddress
         $this->request = $request;
         $this->config = $config;
         $usrDom = explode('@', $email, 2);
+
         if (count($usrDom) === 2 && strlen($usrDom[1]) > 3) {
             $this->domain = $usrDom[1];
             $path = $this->getRCPath($this->domain);
@@ -78,11 +79,13 @@ class InternalAddress
         if ($jsonDomainPath === '') {
             return $defaultRCPath;
         }
+
         $domainPath = json_decode($jsonDomainPath, true);
         if (!is_array($domainPath)) {
             Util::writeLog('roundcube', __METHOD__ . ": Json decoded is not an array.", Util::WARN);
             return $defaultRCPath;
         }
+
         if (isset($domainPath[$domain])) {
             return $domainPath[$domain];
         }
@@ -113,6 +116,7 @@ class InternalAddress
             $this->address  = "$protocol://{$this->server}/".ltrim($path, ' /');
             return true;
         }
+
         Util::writeLog('roundcube', __METHOD__ . ": Invalid path.", Util::ERROR);
         return false;
     }
