@@ -20,23 +20,37 @@
  */
 namespace OCA\RoundCube\Controller;
 
-use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Controller;
+use OCP\IURLGenerator;
+use OCP\IRequest;
+use OCP\IConfig;
+use OCP\IL10N;
+use OCP\Util;
 
-class SettingsController extends \OCP\AppFramework\Controller
+class SettingsController extends Controller
 {
-	public function __construct($AppName, \OCP\IRequest $request) {
+    /** @var urlGenerator */
+    private $urlGenerator;
+
+    /** @var config */
+	private $config;
+
+	public function __construct(string $AppName, IRequest $request, IConfig $config, IURLGenerator $urlGenerator, IL10N $l) {
 		parent::__construct($AppName, $request);
+        $this->urlGenerator = $urlGenerator;
+		$this->config = $config;
+		$this->l = $l;
 	}
 
-	public function adminSettings() {
-		$config = \OC::$server->getConfig();
+	public function adminSettings(): TemplateResponse {
 		$tplParams = array(
-			'ocServer'          => \OC::$server->getURLGenerator()->getAbsoluteURL("/"),
-			'defaultRCPath'     => $config->getAppValue($this->appName, 'defaultRCPath', ''),
+			'ocServer'          => $this->urlGenerator->getAbsoluteURL("/"),
+			'defaultRCPath'     => $this->config->getAppValue($this->appName, 'defaultRCPath', ''),
 			'domainPath'        => json_decode($config->getAppValue($this->appName, 'domainPath', ''), true),
-			'showTopLine'       => $config->getAppValue($this->appName, 'showTopLine', false),
-			'enableSSLVerify'   => $config->getAppValue($this->appName, 'enableSSLVerify', true)
+			'showTopLine'       => $this->config->getAppValue($this->appName, 'showTopLine', false),
+			'enableSSLVerify'   => $this->config->getAppValue($this->appName, 'enableSSLVerify', true)
 		);
 		return new TemplateResponse($this->appName, 'tpl.adminSettings', $tplParams, 'blank');
 	}
@@ -51,8 +65,8 @@ class SettingsController extends \OCP\AppFramework\Controller
 	 *                      )
 	 */
 	public function setAdminSettings() {
-		$l = \OC::$server->getL10N('roundcube');
-		$req = \OC::$server->getRequest();
+		$l = $this->l;
+		$req = $this->request;
 		$appName = $req->getParam('appname', null);
 		if ($appName !== $this->appName) {
 			return new JSONResponse(array(
@@ -61,7 +75,6 @@ class SettingsController extends \OCP\AppFramework\Controller
 			));
 		}
 
-		$config = \OC::$server->getConfig();
 		$defaultRCPath   = $req->getParam('defaultRCPath', '');
 		$rcDomains       = $req->getParam('rcDomain', '');
 		$rcPaths         = $req->getParam('rcPath', '');
@@ -113,7 +126,7 @@ class SettingsController extends \OCP\AppFramework\Controller
 
 		// Passed validation.
 		$defaultRCPath = ltrim($defaultRCPath, " /");
-		$config->setAppValue($appName, 'defaultRCPath', $defaultRCPath);
+		$this->config->setAppValue($appName, 'defaultRCPath', $defaultRCPath);
 		$domainPath = json_encode(array_filter(
 			array_combine($rcDomains, $rcPaths),
 			function($v, $k) {
@@ -121,10 +134,10 @@ class SettingsController extends \OCP\AppFramework\Controller
 			},
 			ARRAY_FILTER_USE_BOTH
 		));
-		$config->setAppValue($appName, 'domainPath', $domainPath);
+		$this->config->setAppValue($appName, 'domainPath', $domainPath);
 		$checkBoxes = array('showTopLine', 'enableSSLVerify');
 		foreach ($checkBoxes as $c) {
-			$config->setAppValue($appName, $c, $$c !== null);
+			$this->config->setAppValue($appName, $c, $$c !== null);
 		}
 
 		return new JSONResponse(array(

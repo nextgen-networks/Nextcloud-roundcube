@@ -20,9 +20,10 @@
  */
 namespace OCA\RoundCube;
 
-use OCP\Util;
 use OCA\RoundCube\Auth\AuthHelper;
 use OCA\RoundCube\InternalAddress;
+use OCP\IConfig;
+use OCP\Util;
 
 /**
  * This class provides the login to RC server using curl.
@@ -48,13 +49,13 @@ class BackLogin
      * @param string $password The password.
      * @return array/bool ['sessid', 'sessauth'] on success, false on error.
      */
-    public function __construct($email, $password, $rcServer, $rcInternalAddress) {
+    public function __construct(string $email, string $password, IConfig $config, InternalAddress $rcIA) {
         $this->email           = $email;
         $this->password        = $password;
-        $this->config          = \OC::$server->getConfig();
-        $this->enableSSLVerify = $this->config->getAppValue('roundcube', 'enableSSLVerify', true);
-        $this->rcServer          = $rcServer;
-        $this->rcInternalAddress = $rcInternalAddress;
+        $this->config          = $config;
+        $this->enableSSLVerify = $config->getAppValue('roundcube', 'enableSSLVerify', true);
+        $this->rcServer          = $rcIA->getAddress();
+        $this->rcInternalAddress = $rcIA->getServer();
     }
 
     /**
@@ -62,7 +63,7 @@ class BackLogin
      * On success, RoundCube is ready to show up.
      * @return bool True on login, false otherwise.
      */
-    public function login() {
+    public function login(): int {
         // End previous session:
         // Delete cookies sessauth & sessid by expiring them.
         setcookie(AuthHelper::COOKIE_RC_SESSID, "-del-", 1, "/", "", true, true);
@@ -71,7 +72,7 @@ class BackLogin
         $loginPageObj = $this->sendRequest("?_task=login", "GET");
         if ($loginPageObj === false) {
             Util::writeLog('roundcube', __METHOD__ . ": Could not get login page.", Util::ERROR);
-            return false;
+            return AuthHelper::ERROR_LOGING;
         }
         $cookies = self::parseCookies($loginPageObj['headers']['set-cookie']);
         if (isset($cookies[AuthHelper::COOKIE_RC_SESSID])) {
@@ -92,7 +93,7 @@ class BackLogin
         $loginAnswerObj = $this->sendRequest("?_task=login&_action=login", "POST", $data);
         if ($loginAnswerObj === false) {
             Util::writeLog('roundcube', __METHOD__ . ": Could not get login response.", Util::ERROR);
-            return false;
+            return AuthHelper::ERROR_LOGING;
         }
         // Set cookies sessauth and sessid.
         $cookiesLogin = self::parseCookies($loginAnswerObj['headers']['set-cookie']);
@@ -108,15 +109,15 @@ class BackLogin
             $this->rcSessionAuth = $cookiesLogin[AuthHelper::COOKIE_RC_SESSAUTH];
             setcookie(AuthHelper::COOKIE_RC_SESSAUTH, $this->rcSessionAuth,
                 0, "/", "", true, true);
-            return true;
+            return AuthHelper::SUCCESS;
         }
         // Check again whether input fields of login form exist.
         $inputsLogin = self::parseInputs($loginAnswerObj['html']);
         if (empty($inputsLogin) || !isset($inputsLogin["_user"]) || !isset($inputsLogin["_pass"])) {
-            return true; // It shouldn't get here ever.
+            return AuthHelper::SUCCESS; // It shouldn't get here ever.
         } else {
             Util::writeLog('roundcube', __METHOD__ . ": Could not login.", Util::ERROR);
-            return false;
+            return AuthHelper::ERROR_LOGING;
         }
     }
 
