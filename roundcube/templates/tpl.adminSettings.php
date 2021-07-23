@@ -22,7 +22,6 @@
  */
 style('roundcube', 'adminSettings');
 script('roundcube', 'adminSettings');
-$imgDel = \OC::$server->getURLGenerator()->imagePath('core', 'actions/delete.svg');
 ?>
 <div class="section" id="roundcube">
 	<h2 class="app-name">RoundCube</h2>
@@ -65,7 +64,7 @@ if(isset($_['domainPath']) && is_array($_['domainPath'])) foreach ($_['domainPat
 						<td class="remove">
 							<a class="action delete" href="#"
 								title="<?php p($l->t('Remove')); ?>">
-								<img class="action" src="<?php p($imgDel); ?>">
+								<img class="action" src="<?php $_['imgDel'] ?>">
 							</a>
 						</td>
 					</tr>
