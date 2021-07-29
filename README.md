@@ -47,7 +47,8 @@ ProxyPassReverse /roundcube2/ https://proxymail2.domain.com/
 
 ### Nginx example:
 
-```location  ^~ /roundcube1 {
+``` Nginx
+    location  ^~ /roundcube1 {
            proxy_pass https://roundcube.example.org;
            proxy_set_header Host $host;
            proxy_set_header X-Real-IP $remote_addr;
