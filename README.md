@@ -48,13 +48,13 @@ ProxyPassReverse /roundcube2/ https://proxymail2.domain.com/
 ### Nginx example:
 
 ``` Nginx
-    location  ^~ /roundcube1 {
-           proxy_pass https://roundcube.example.org;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $remote_addr;
-           proxy_connect_timeout 120;
-           proxy_send_timeout 120;
-           proxy_read_timeout 180;
-    }
+location  ^~ /roundcube1 {
+ proxy_pass https://roundcube.example.org;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ proxy_set_header X-Forwarded-For $remote_addr;
+ proxy_connect_timeout 120;
+ proxy_send_timeout 120;
+ proxy_read_timeout 180;
+ }
 ```
