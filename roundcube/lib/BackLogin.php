@@ -22,8 +22,9 @@ namespace OCA\RoundCube;
 
 use OCA\RoundCube\Auth\AuthHelper;
 use OCA\RoundCube\InternalAddress;
+use Psr\Log\LoggerInterface;
+use OCA\RoundCube\Utils;
 use OCP\IConfig;
-use OCP\Util;
 
 /**
  * This class provides the login to RC server using curl.
@@ -44,15 +45,21 @@ class BackLogin
     private $rcSessionID = "";
     private $rcSessionAuth = "";
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * @param string $email Email address.
      * @param string $password The password.
      * @return array/bool ['sessid', 'sessauth'] on success, false on error.
      */
-    public function __construct(string $email, string $password, IConfig $config, InternalAddress $rcIA) {
+    public function __construct(string $email, string $password, IConfig $config,
+                                InternalAddress $rcIA, LoggerInterface $logger)
+    {
         $this->email           = $email;
         $this->password        = $password;
         $this->config          = $config;
+        $this->logger          = $logger;
         $this->enableSSLVerify = $config->getAppValue('roundcube', 'enableSSLVerify', true);
         $this->rcServer          = $rcIA->getAddress();
         $this->rcInternalAddress = $rcIA->getServer();
@@ -72,7 +79,7 @@ class BackLogin
         // Get login page, extracts sessionID and token.
         $loginPageObj = $this->sendRequest("?_task=login", "GET");
         if ($loginPageObj === false) {
-            Util::writeLog('roundcube', __METHOD__ . ": Could not get login page.", Util::ERROR);
+            Utils::log_error($this->logger, "Could not get login page.");
             return AuthHelper::ERROR_LOGING;
         }
 
@@ -95,7 +102,7 @@ class BackLogin
         // Post login form.
         $loginAnswerObj = $this->sendRequest("?_task=login&_action=login", "POST", $data);
         if ($loginAnswerObj === false) {
-            Util::writeLog('roundcube', __METHOD__ . ": Could not get login response.", Util::ERROR);
+            Utils::log_error($this->logger, "Could not get login response.");
             return AuthHelper::ERROR_LOGING;
         }
 
@@ -120,7 +127,7 @@ class BackLogin
         if (empty($inputsLogin) || !isset($inputsLogin["_user"]) || !isset($inputsLogin["_pass"])) {
             return AuthHelper::SUCCESS; // It shouldn't get here ever.
         } else {
-            Util::writeLog('roundcube', __METHOD__ . ": Could not login.", Util::ERROR);
+            Utils::log_error($this->logger, "Could not login.");
             return AuthHelper::ERROR_LOGING;
         }
     }
@@ -163,7 +170,7 @@ class BackLogin
     private function sendRequest($rcQuery, $method, $data = null) {
         $response = false;
         $rcQuery = $this->rcServer . "$rcQuery";
-        Util::writeLog('roundcube', __METHOD__ . ": URL: '$rcQuery'.", Util::DEBUG);
+        Utils::log_debug($this->logger, "URL: '$rcQuery'.");
 
         try {
             $curl = curl_init();
@@ -204,7 +211,7 @@ class BackLogin
 
             $curlOpts[CURLOPT_COOKIE] = rtrim($cookies, "; ");
             if (!$this->enableSSLVerify) {
-                Util::writeLog('roundcube', __METHOD__ . ": Disabling SSL verification.", Util::WARN);
+                Utils::log_warning($this->logger, "Disabling SSL verification.");
                 $curlOpts[CURLOPT_SSL_VERIFYPEER] = false;
                 $curlOpts[CURLOPT_SSL_VERIFYHOST] = 0;
             }
@@ -218,16 +225,16 @@ class BackLogin
             $headerSize     = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
             $respHttpCode   = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-            Util::writeLog('roundcube', __METHOD__ . ": Got the following HTTP Status Code: ($respHttpCode) $curlErrorNum: $curlError", Util::DEBUG);
+            Utils::log_debug($this->logger, "Got the following HTTP Status Code: ($respHttpCode) $curlErrorNum: $curlError");
 
             if ($curlErrorNum === CURLE_OK && $respHttpCode < 400)
                 $response = self::splitResponse($rawResponse, $headerSize);
             else
-                Util::writeLog('roundcube', __METHOD__ . ": Opening url '$rcQuery' failed with '$curlError'", Util::WARN);
+                Utils::log_warning($this->logger, "Opening url '$rcQuery' failed with '$curlError'");
 
             curl_close($curl);
         } catch (Exception $e) {
-            Util::writeLog('roundcube', __METHOD__ . ": URL '$rcQuery' open failed.", Util::WARN);
+            Utils::log_warning($this->logger, "URL '$rcQuery' open failed.");
         }
 
         return $response;

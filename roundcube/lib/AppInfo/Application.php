@@ -35,6 +35,7 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCA\RoundCube\Auth\LogoutListener;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use OCP\INavigationManager;
 use OCP\AppFramework\App;
 use OCP\IServerContainer;
@@ -43,7 +44,6 @@ use OCP\IUserSession;
 use OCP\IRequest;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\Util;
 
 class Application extends App implements IBootstrap
 {
@@ -57,7 +57,8 @@ class Application extends App implements IBootstrap
         $context->registerService(PageController::class, function (ContainerInterface $c) {
             return new PageController(self::APP_ID, $c->get(IRequest::class), $c->get(IConfig::class),
                                       $c->get(IStore::class), $c->get(IURLGenerator::class),
-                                      $c->get(IUserSession::class), $c->get(INavigationManager::class));
+                                      $c->get(IUserSession::class), $c->get(INavigationManager::class),
+                                      $c->get(LoggerInterface::class));
         }, false);
 
         $context->registerService(SettingsController::class, function(ContainerInterface $c) {

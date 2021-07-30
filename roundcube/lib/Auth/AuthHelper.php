@@ -29,11 +29,12 @@ use OCP\Authentication\Exceptions\PasswordUnavailableException;
 use OCP\Authentication\LoginCredentials\IStore;
 use OCA\RoundCube\InternalAddress;
 use OCA\RoundCube\BackLogin;
+use Psr\Log\LoggerInterface;
+use OCA\RoundCube\Utils;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\IRequest;
 use OCP\IConfig;
-use OCP\Util;
 
 class AuthHelper
 {
@@ -58,14 +59,18 @@ class AuthHelper
     /** @var request */
     private $request;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(IStore $credentialStore, IUserSession $userSession, IConfig $config,
-                                IURLGenerator $urlGenerator, IRequest $request)
+                                IURLGenerator $urlGenerator, IRequest $request, LoggerInterface $logger)
     {
         $this->credentialStore = $credentialStore;
         $this->urlGenerator = $urlGenerator;
         $this->userSession = $userSession;
         $this->request = $request;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -76,7 +81,7 @@ class AuthHelper
         $email = self::getUserEmail();
         if (strpos($email, '@') === false) {
             $user = $this->userSession->getUser()->getUID();
-            Util::writeLog('roundcube', __METHOD__ . ": username ($user) is not an email address and email ($email) is not valid also.", Util::WARN);
+            Utils::log_warning($this->logger, "Username($user) is not an email address and email($email) is not valid also.");
             $return = self::ERROR_CREDENTIALS;
             return null;
         }
@@ -84,13 +89,13 @@ class AuthHelper
         try {
             $password = $this->credentialStore->getLoginCredentials()->getPassword();
         } catch (CredentialsUnavailableException | PasswordUnavailableException $e) {
-            Util::writeLog('roundcube', __METHOD__ . ": Error while retrieving the password of the $email account.", Util::ERROR);
+            Utils::log_error($this->logger, "Error while retrieving the password of the $email account.");
             $return = self::ERROR_CREDENTIALS;
             return null;
         }
 
-        $rcIA = new InternalAddress($email, $this->config, $this->urlGenerator, $this->request);
-        $backLogin = new BackLogin($email, $password, $this->config, $rcIA);
+        $rcIA = new InternalAddress($email, $this->config, $this->urlGenerator, $this->request, $this->logger);
+        $backLogin = new BackLogin($email, $password, $this->config, $rcIA, $this->logger);
         $return = $backLogin->login();
 
         return $rcIA;

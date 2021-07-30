@@ -27,12 +27,12 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCA\RoundCube\InternalAddress;
 use OCA\RoundCube\Auth\AuthHelper;
 use OCP\AppFramework\Controller;
+use Psr\Log\LoggerInterface;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\IRequest;
 use OCP\IConfig;
-use OCP\Util;
 
 class PageController extends Controller
 {
@@ -54,9 +54,13 @@ class PageController extends Controller
     /** @var urlGenerator */
     private $urlGenerator;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(string $appName, IRequest $request, IConfig $config,
                                 IStore $credentialStore, IURLGenerator $urlGenerator,
-                                IUserSession $userSession, INavigationManager $navigationManager)
+                                IUserSession $userSession, INavigationManager $navigationManager,
+                                LoggerInterface $logger)
     {
         parent::__construct($appName, $request);
         $this->user = $userSession->getUser()->getUID();
@@ -65,6 +69,7 @@ class PageController extends Controller
         $this->urlGenerator = $urlGenerator;
         $this->userSession = $userSession;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -73,7 +78,8 @@ class PageController extends Controller
      */
     public function index(): TemplateResponse {
         $this->navigationManager->setActiveEntry($this->appName);
-        $authHelper = new AuthHelper($this->credentialStore, $this->userSession, $this->config, $this->urlGenerator, $this->request);
+        $authHelper = new AuthHelper($this->credentialStore, $this->userSession, $this->config,
+                                     $this->urlGenerator, $this->request, $this->logger);
         $return = 0;
 
         $rcIA = $authHelper->login($return);

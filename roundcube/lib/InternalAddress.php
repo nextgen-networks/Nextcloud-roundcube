@@ -20,10 +20,11 @@
  */
 namespace OCA\RoundCube;
 
+use Psr\Log\LoggerInterface;
+use OCA\RoundCube\Utils;
 use OCP\IURLGenerator;
 use OCP\IRequest;
 use OCP\IConfig;
-use OCP\Util;
 
 /**
  * The responsibility is to figure out the RC full address of logged in user,
@@ -43,10 +44,16 @@ class InternalAddress
     private $config;
     private $request;
 
-    public function __construct(string $email, IConfig $config, IURLGenerator $urlGenerator, IRequest $request) {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(string $email, IConfig $config, IURLGenerator $urlGenerator,
+                                IRequest $request, LoggerInterface $logger)
+    {
         $this->urlGenerator = $urlGenerator;
         $this->request = $request;
         $this->config = $config;
+        $this->logger = $logger;
         $usrDom = explode('@', $email, 2);
 
         if (count($usrDom) === 2 && strlen($usrDom[1]) > 3) {
@@ -54,7 +61,7 @@ class InternalAddress
             $path = $this->getRCPath($this->domain);
             $this->computeProperties($path);
         } else {
-            Util::writeLog('roundcube', __METHOD__ . ": User ID and email address are not valid emails.", Util::ERROR);
+            Utils::log_error($this->logger, "User ID and email address are not valid emails.");
         }
     }
 
@@ -82,7 +89,7 @@ class InternalAddress
 
         $domainPath = json_decode($jsonDomainPath, true);
         if (!is_array($domainPath)) {
-            Util::writeLog('roundcube', __METHOD__ . ": Json decoded is not an array.", Util::WARN);
+            Utils::log_warning($this->logger, "Json decoded is not an array.");
             return $defaultRCPath;
         }
 
@@ -117,7 +124,7 @@ class InternalAddress
             return true;
         }
 
-        Util::writeLog('roundcube', __METHOD__ . ": Invalid path.", Util::ERROR);
+        Utils::log_error($this->logger, "Invalid path.");
         return false;
     }
 }
