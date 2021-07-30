@@ -28,13 +28,18 @@ use OCP\User\Events\BeforeUserLoggedOutEvent;
 use OCP\EventDispatcher\IEventListener;
 use OCA\RoundCube\Auth\AuthHelper;
 use OCP\EventDispatcher\Event;
+use Psr\Log\LoggerInterface;
+use OCA\RoundCube\Utils;
 use OCP\IUser;
-use OCP\Util;
 
 class LogoutListener implements IEventListener
 {
-    public function __construct() {
-        /* Nothing */
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -51,13 +56,13 @@ class LogoutListener implements IEventListener
 
         $email = $user->getEMailAddress();
         if (strpos($email, '@') === false) {
-            Util::writeLog('roundcube', __METHOD__ . ": user email ($email) is not an email address.", Util::WARN);
+            Utils::log_warning($this->logger, "User email($email) is not an email address.");
             return;
         }
 
         // Expires cookies.
         setcookie(AuthHelper::COOKIE_RC_SESSID,   "-del-", 1, "/", "", true, true);
         setcookie(AuthHelper::COOKIE_RC_SESSAUTH, "-del-", 1, "/", "", true, true);
-        Util::writeLog('roundcube', __METHOD__ . ": Logout of user '$email' from RoundCube done.", Util::INFO);
+        Utils::log_info($this->logger, "Logout of user '$email' from RoundCube done.");
     }
 }
