@@ -1,6 +1,10 @@
 # nextcloud-roundcube
 NextCloud app to integrate RoundCube Webmail. The app embeds the [RoundCube webmail](https://roundcube.net/ "RoundCube's homepage") interface in NextCloud.
 
+## Screenshot
+
+![App](img/Roundcube-nextcloud-app.png)
+
 ## History
 This app uses idea and code from [this app](https://github.com/hypery2k/owncloud/tree/master/roundcube).
 The app needed an update to work with newer versions of NextCloud. This app doesn't have all features but at least you can auto-login.
