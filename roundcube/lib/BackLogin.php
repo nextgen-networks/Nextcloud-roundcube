@@ -21,7 +21,7 @@
 namespace OCA\RoundCube;
 
 use OCP\Util;
-use OCA\RoundCube\AuthHelper;
+use OCA\RoundCube\Auth\AuthHelper;
 use OCA\RoundCube\InternalAddress;
 
 /**
