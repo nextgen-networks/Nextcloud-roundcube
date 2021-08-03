@@ -89,7 +89,7 @@ class InternalAddress
 
         $domainPath = json_decode($jsonDomainPath, true);
         if (!is_array($domainPath)) {
-            Utils::log_warning($this->logger, "Json decoded is not an array.");
+            Utils::log_notice($this->logger, "Json decoded is not an array.");
             return $defaultRCPath;
         }
 
