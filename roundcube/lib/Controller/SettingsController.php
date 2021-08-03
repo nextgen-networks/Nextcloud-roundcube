@@ -37,7 +37,9 @@ class SettingsController extends Controller
     /** @var config */
     private $config;
 
-    public function __construct(string $AppName, IRequest $request, IConfig $config, IURLGenerator $urlGenerator, IL10N $l) {
+    public function __construct(string $AppName, IRequest $request, IConfig $config,
+                                IURLGenerator $urlGenerator, IL10N $l)
+    {
         parent::__construct($AppName, $request);
         $this->urlGenerator = $urlGenerator;
         $this->config = $config;
@@ -72,57 +74,37 @@ class SettingsController extends Controller
         $enableSSLVerify = $req->getParam('enableSSLVerify', null);
 
         // Validate and do a first fix of some values.
-        $validation = array();
         if (!is_string($defaultRCPath) || $defaultRCPath === '')
-            $validation[] = $l->t("Default RC installation path can't be an empty string.");
-        elseif (preg_match('/^([a-zA-Z]+:)?\/\//', $defaultRCPath) === 1)
-            $validation[] = $l->t("Default path must be a url relative to this server.");
-        else
-            $defaultRCPath = trim($defaultRCPath);
+            return self::error_response($l->t("Default RC installation path can't be an empty string."));
+        else if (preg_match('/^([a-zA-Z]+:)?\/\//', $defaultRCPath) === 1)
+            return self::error_response($l->t("Default path must be a url relative to this server."));
 
-        if(isset($rcDomains) && is_array($rcDomains)) {
-            foreach ($rcDomains as &$dom) {
-                if (!is_string($dom) || preg_match('/(@|\/)/', $dom) === 1) {
-                    $validation[] = $l->t("A domain is not valid.");
-                    break;
-                } else {
-                    $dom = trim($dom);
-                }
-            }
+        $defaultRCPath = ltrim(trim($defaultRCPath));
+
+        if (!is_array($rcDomains) || !is_array($rcPaths)) {
+			$this->config->setAppValue($appName, 'domainPath', array());
+			goto success_output;
+		}
+
+        foreach ($rcDomains as &$dom) {
+            if (!is_string($dom) || preg_match('/(@|\/)/', $dom) === 1)
+                return self::error_response($l->t("A domain is not valid."));
+            else
+                $dom = trim($dom);
         }
 
-        if(isset($rcPaths) && is_array($rcPaths)) foreach ($rcPaths as &$path) {
-            if (!is_string($path)) {
-                $validation[] = $l->t("A path is not valid.");
-                break;
-            }
+        foreach ($rcPaths as &$path) {
+            if (!is_string($path))
+                return self::error_response($l->t("A path is not valid."));
 
             $path = trim($path);
-            if (preg_match('/^([a-zA-Z]+:)?\/\//', $path) === 1 || $path === '') {
-                $validation[] = $l->t("Paths must be urls relative to this server.");
-                break;
-            } else {
+            if (preg_match('/^([a-zA-Z]+:)?\/\//', $path) === 1 || $path === '')
+                return self::error_response($l->t("Paths must be urls relative to this server."));
+            else
                 $path = ltrim($path, " /");
-            }
-        }
-
-        $rcDomains !== $rcPaths;
-        if (is_iterable($rcDomains)) {
-            $validation[] = $l->t("Unpaired domains and paths.");
-        }
-
-        // Won't change anything if validation fails.
-        if (!empty($validation)) {
-            return new JSONResponse(array(
-                'status'  => 'error',
-                'message' => $l->t("Some inputs are not valid."),
-                'invalid' => $validation
-            ));
         }
 
         // Passed validation.
-        $defaultRCPath = ltrim($defaultRCPath, " /");
-        $this->config->setAppValue($appName, 'defaultRCPath', $defaultRCPath);
         $domainPath = json_encode(array_filter(
             array_combine($rcDomains, $rcPaths),
             function($v, $k) {
@@ -130,8 +112,11 @@ class SettingsController extends Controller
             },
             ARRAY_FILTER_USE_BOTH
         ));
-
         $this->config->setAppValue($appName, 'domainPath', $domainPath);
+
+success_output:
+        $this->config->setAppValue($appName, 'defaultRCPath', $defaultRCPath);
+
         $checkBoxes = array('showTopLine', 'enableSSLVerify');
         foreach ($checkBoxes as $c) {
             $this->config->setAppValue($appName, $c, $$c !== null);
@@ -141,6 +126,14 @@ class SettingsController extends Controller
             'status'  => 'success',
             'message' => $l->t('Application settings successfully stored.'),
             'config'  => array('defaultRCPath' => $defaultRCPath)
+        ));
+    }
+
+    protected function error_response(string $validation): JSONResponse {
+        return new JSONResponse(array(
+            'status'  => 'error',
+            'message' => $this->l->t("Some inputs are not valid."),
+            'invalid' => array($validation)
         ));
     }
 }
